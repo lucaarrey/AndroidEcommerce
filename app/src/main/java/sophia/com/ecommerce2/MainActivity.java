@@ -11,6 +11,8 @@ import java.util.List;
 
 import sophia.com.ecommerce2.adapter.CategoryAdapter;
 import sophia.com.ecommerce2.adapter.OnAdapterItemClickListener;
+import sophia.com.ecommerce2.adapter.ProductAdapter;
+import sophia.com.ecommerce2.model.Product;
 
 public class MainActivity extends AppCompatActivity implements OnAdapterItemClickListener {
 
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
 
         CategoryAdapter categoryAdapter = new CategoryAdapter(categorylist, this);
         categoryRecyclerView.setAdapter(categoryAdapter);
+
+
 
     }
 
