@@ -1,5 +1,6 @@
 package sophia.com.ecommerce2;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
 
     @Override
     public void OnItemClick(int position) {
+        Intent i = new Intent(this,ProductListActivity.class );
+        startActivity(i);
 
     }
 }
