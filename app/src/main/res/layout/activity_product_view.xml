@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+
+    tools:context="sophia.com.ecommerce2.ProductViewActivity">
+
+    <android.support.v7.widget.CardView
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        app:cardElevation="2dp"
+        app:cardCornerRadius="2dp"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/img_product"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="ksdpfak"
+                    android:textColor="#000000"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="40sp"/>
+
+                <RatingBar
+                    android:id="@+id/stars"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|left"
+                    android:layout_marginLeft="15dp"
+                    android:numStars="5"
+                    android:progressTint="@color/colorPrimaryDark"
+                    android:secondaryProgressTint="@color/colorPrimary"
+                    android:stepSize="1"
+                    style="?android:attr/ratingBarStyleSmall"/>
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="15dp"
+                    android:paddingLeft="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="afadnf"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:text="SHARE"
+                        android:padding="12dp"
+                        android:id="@+id/share"/>
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:padding="12dp"
+                        android:text="ADD"
+                        android:id="@+id/add_to_cart"/>
+
+                    <TextView
+                        android:id="@+id/price"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingRight="10dp"
+                        android:gravity="center_vertical|right"
+                        android:textColor="#FF0000"
+                        android:textSize="14dp"
+                        android:text="49.99"/>
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/long_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="15dp"
+                    android:paddingLeft="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="orem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan lectus eget lobortis volutpat. Nunc id urna ac orci pharetra bibendum. Sed velit mi, ultrices nec aliquam sed, luctus a leo. Morbi fermentum lacus non ligula maximus finibus. Aliquam erat volutpat. Donec a sodales ex. Pellentesque habitant morbi tristique senectus. "/>
+
+            </LinearLayout>
+
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </ScrollView>
+
+
+
+
+
+
+
+
+
