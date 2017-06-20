@@ -15,6 +15,7 @@ public class Product {
     private String description;
     private String[] photo;
     private int stars;
+    private String longDescription;
 
     public Product(int id, String imagePath, String name, double price, String description) {
         this.id = id;
@@ -22,6 +23,16 @@ public class Product {
         this.name = name;
         this.price = price;
         this.description = description;
+    }
+
+    public Product(int id, String imagePath, String name, double price, String description, int stars, String longDescription) {
+        this.id = id;
+        this.imagePath = imagePath;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.stars = stars;
+        this.longDescription = longDescription;
     }
 
     public int getId() {
@@ -126,5 +137,13 @@ public class Product {
         result = 31 * result + Arrays.hashCode(photo);
         result = 31 * result + stars;
         return result;
+    }
+
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 }

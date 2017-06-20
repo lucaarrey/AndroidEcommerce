@@ -1,5 +1,6 @@
 package sophia.com.ecommerce2;
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ public class ProductListActivity extends AppCompatActivity implements OnAdapterI
 
 
     private List<Product> productlist = new ArrayList<>();
-    private RecyclerView productRecyclerView;
+    private RecyclerView    productRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,9 @@ public class ProductListActivity extends AppCompatActivity implements OnAdapterI
     @Override
     public void OnItemClick(int position) {
 
+        Intent i = new Intent(this, ProductViewActivity.class);
+        startActivity(i);
+
     }
 
     @Override
@@ -56,7 +60,7 @@ public class ProductListActivity extends AppCompatActivity implements OnAdapterI
         Log.d("ProductListActivity","Stampato add to cart: " + position);
 
         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.product_recycle_view),
-                "added to cart", Snackbar.LENGTH_SHORT);
+                "added to cart", Snackbar.LENGTH_LONG);
         mySnackbar.setAction("annulla", new View.OnClickListener() {
             @Override
             public void onClick(View v) {

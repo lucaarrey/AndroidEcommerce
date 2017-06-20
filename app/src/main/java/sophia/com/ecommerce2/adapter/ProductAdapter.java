@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,8 +36,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         this.context = context;
         this.listener = (OnAdapterItemClickListener)context;
 
-        Locale l = new Locale("it");
-        format = NumberFormat.getCurrencyInstance(l);
+
+        format = NumberFormat.getCurrencyInstance(Locale.ITALY);
 
 
     }
@@ -46,12 +47,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.product_row_adapter, parent, false);
 
-        ProductAdapter.ViewHolder vh = new ProductAdapter.ViewHolder(v);
+        ViewHolder vh = new ViewHolder(v);
 
         vh.img_product = (ImageView) v.findViewById(R.id.img_product);
         vh.name = (TextView) v.findViewById(R.id.name);
         vh.description = (TextView)v.findViewById(R.id.description);
-        vh.price = (TextView)v.findViewById((R.id.price));
+        vh.price = (TextView)v.findViewById(R.id.price);
+        vh.add_to_cart = (Button)v.findViewById(R.id.add_to_cart);
+        vh.share = (Button)v.findViewById(R.id.share);
+
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +66,32 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 }
 
             }
+        });
+
+        vh.add_to_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("OnAddToCartClick", v.getTag().toString());
+
+
+                if (listener != null) {
+                    listener.OnAddToCartClick((int) v.getTag());
+                }
+            }
+
+        });
+
+        vh.share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("ShareClick", v.getTag().toString());
+
+
+                if (listener != null) {
+                    listener.OnShareClick((int) v.getTag());
+                }
+            }
+
         });
 
         return vh;
@@ -75,6 +105,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.price.setText(format.format(productList.get(position).getPrice()));
 
         holder.itemView.setTag(position);
+        holder.add_to_cart.setTag(position);
+        holder.share.setTag(position);
 
     }
 
@@ -89,6 +121,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         public TextView name;//(a) procedimento con passaggio al costruttore, passo 1
         public TextView description;
         public TextView price;
+        public Button add_to_cart;
+        public Button share;
 
         public ViewHolder(final View container) {
             super(container);
