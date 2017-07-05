@@ -1,15 +1,25 @@
 package sophia.com.ecommerce2;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import sophia.com.ecommerce2.Database.EcommerceOpenHelper;
 import sophia.com.ecommerce2.model.Product;
+import sophia.com.ecommerce2.network.EcommerceService;
 
 public class ProductViewActivity extends AppCompatActivity {
 
@@ -20,6 +30,9 @@ public class ProductViewActivity extends AppCompatActivity {
     public TextView long_description;
 
     private EcommerceOpenHelper ecommerceDB;
+
+    private ProductTask mTask = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +60,59 @@ public class ProductViewActivity extends AppCompatActivity {
 //
         int productId = getIntent().getIntExtra("productId", -1);
 
-        Product p = ecommerceDB.getProduct(productId);
+        //Product p = ecommerceDB.getProduct(productId);
 
-        Picasso.with(this).load(p.getImagePath()).into(img_product);
-        name.setText(p.getName());
-        stars.setTag(p.getStars());
-        description.setTag(p.getDescription());
-        long_description.setText(p.getLongDescription());
+//        Picasso.with(this).load(p.getImagePath()).into(img_product);
+//        name.setText(p.getName());
+//        stars.setTag(p.getStars());
+//        description.setTag(p.getDescription());
+//        long_description.setText(p.getLongDescription());
 
-
+        mTask = new ProductTask();
+        mTask.execute((Void) null);
 
     }
+
+    public class ProductTask extends AsyncTask<Void, Void, Product>{
+        @Override
+        protected Product doInBackground(Void... params) {
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://ecommerce2.getsandbox.com").addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            EcommerceService service = retrofit.create(EcommerceService.class);
+            Call<Product> productCall = service.product();
+
+            try {
+                Response<Product> productResponse = productCall.execute();
+
+                if (productResponse.isSuccessful()){
+
+                    return productResponse.body();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Product p){
+
+            if (p == null) return;
+
+            Picasso.with(ProductViewActivity.this).load(p.getImagePath()).into(img_product);
+            name.setText(p.getName());
+            stars.setTag(p.getStars());
+            description.setTag(p.getDescription());
+            long_description.setText(p.getLongDescription());
+
+        }
+    }
+
 
 
 }
