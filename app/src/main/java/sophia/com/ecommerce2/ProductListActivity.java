@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import sophia.com.ecommerce2.Database.EcommerceOpenHelper;
 import sophia.com.ecommerce2.adapter.OnAdapterItemClickListener;
 import sophia.com.ecommerce2.adapter.ProductAdapter;
 import sophia.com.ecommerce2.model.Product;
@@ -24,10 +25,14 @@ public class ProductListActivity extends AppCompatActivity implements OnAdapterI
     private List<Product> productlist = new ArrayList<>();
     private RecyclerView    productRecyclerView;
 
+    private EcommerceOpenHelper ecommerceDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_list);
+
+        ecommerceDB = new EcommerceOpenHelper(this);
 
         productRecyclerView = (RecyclerView)findViewById(R.id.product_recycle_view);
 
@@ -36,12 +41,18 @@ public class ProductListActivity extends AppCompatActivity implements OnAdapterI
         productRecyclerView.setLayoutManager(layout);
 
 
-        for (int i =0; i < 50; i++){
-            productlist.add(new Product(1, "http://clicksolutions.it/wp-content/uploads/2016/04/privati.jpg","Pc", 13.99, "blalvvlalvlalvallv" ));
-        }
+//        for (int i =0; i < 50; i++){
+//            productlist.add(new Product(1, "http://clicksolutions.it/wp-content/uploads/2016/04/privati.jpg","Pc", 13.99, "blalvvlalvlalvallv" ));
+//        }
+
+        int categoryId = getIntent().getIntExtra("categoryId", -1);
+
+        productlist = ecommerceDB.getallproduct(categoryId);
 
         ProductAdapter productAdapter = new ProductAdapter(productlist, this);
         productRecyclerView.setAdapter(productAdapter);
+
+
 
 
     }
@@ -50,6 +61,7 @@ public class ProductListActivity extends AppCompatActivity implements OnAdapterI
     public void OnItemClick(int position) {
 
         Intent i = new Intent(this, ProductViewActivity.class);
+        i.putExtra("productId", productlist.get(position).getId());
         startActivity(i);
 
     }

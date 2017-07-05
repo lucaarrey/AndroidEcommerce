@@ -22,7 +22,7 @@ public class EcommerceOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = EcommerceOpenHelper.class.getSimpleName();
 
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String ECOMMERCE_CATEGORY_TABLE = "category";
     private static final String DATABASE_ECOMMERCE = "Ecommerce";
 
@@ -88,8 +88,8 @@ public class EcommerceOpenHelper extends SQLiteOpenHelper {
                     KEY_PRODUCT_DESCRIPTION + " TEXT, " +
                     KEY_PRODUCT_LONG_DESCRIPTION + " TEXT, " +
                     KEY_PRODUCT_STARS + " FLOAT, " +
-                    KEY_PRODUCT_IMG_PRODUCT + " VARCHAR " +
-                    KEY_PRODUCT_PRICE + " VARCHAR " +
+                    KEY_PRODUCT_IMG_PRODUCT + " VARCHAR, " +
+                    KEY_PRODUCT_PRICE + " DOUBLE, " +
                     FOREIGN_KEY_CATEGORY + " INTEGER);";
 
 
@@ -108,6 +108,11 @@ public class EcommerceOpenHelper extends SQLiteOpenHelper {
         db.execSQL(ECOMMERCE_TABLE_CATEGORY_CREATE);
 
         fillDatabaseWithData(db);
+
+        db.execSQL(ECOMMERCE_TABLE_PRODUCT_CREATE);
+
+        fillProductWithData(db);
+
 
     }
 
@@ -143,9 +148,9 @@ public class EcommerceOpenHelper extends SQLiteOpenHelper {
             values.put(KEY_PRODUCT_LONG_DESCRIPTION, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent a vehicula tortor, non imperdiet lacus. Sed id tortor molestie, efficitur justo eget, convallis sapien. Vivamus at elit elit. Mauris pharetra purus ut neque egestas, eu ultricies erat venenatis. Duis accumsan vulputate efficitur. Etiam at dictum justo. Mauris aliquet tortor quis. " );
             values.put(KEY_PRODUCT_STARS, 4.5 );
             values.put(KEY_PRODUCT_IMG_PRODUCT, "http://mtpcon.com/wp-content/uploads/sites/1/2014/10/mtp.png" );
-            values.put(KEY_PRODUCT_PRICE, 42.43 );
+            values.put(KEY_PRODUCT_PRICE, 42.43);
             values.put(FOREIGN_KEY_CATEGORY, 1 );
-            db.insert(ECOMMERCE_CATEGORY_TABLE, null, values);
+            db.insert(PRODUCT_TABLE, null, values);
         }
 
     }
@@ -179,13 +184,32 @@ public class EcommerceOpenHelper extends SQLiteOpenHelper {
 
     }
 
-    public Product getproduct(int position) {
-        String query = "SELECT * FROM" + ECOMMERCE_TABLE_PRODUCT_CREATE +
-                " ORDER BY " + KEY_PRODUCT_NAME + " ASC " +
-                "LIMIT " + position + ",1";
+    public Product getProduct(int productId) {
+        String query = "SELECT * FROM " + PRODUCT_TABLE + " WHERE " + KEY_ID_PRODUCT + " = ?";
         Cursor cursor = null;
 
         Product entry = new Product();
+
+        try {
+            if (mReadableDB == null) {
+                mReadableDB = getReadableDatabase();
+            }
+            cursor = mReadableDB.rawQuery(query, new  String[]{String.valueOf(productId)});
+            cursor.moveToFirst();
+            entry.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID_PRODUCT)));
+            entry.setName(cursor.getString(cursor.getColumnIndex(KEY_PRODUCT_NAME)));
+            entry.setDescription(cursor.getString(cursor.getColumnIndex(KEY_PRODUCT_DESCRIPTION)));
+            entry.setImagePath(cursor.getString(cursor.getColumnIndex(KEY_PRODUCT_IMG_PRODUCT)));
+            entry.setLongDescription(cursor.getString(cursor.getColumnIndex(KEY_PRODUCT_LONG_DESCRIPTION)));
+            entry.setPrice(cursor.getDouble(cursor.getColumnIndex(KEY_PRODUCT_PRICE)));
+            entry.setStars(cursor.getFloat(cursor.getColumnIndex(KEY_PRODUCT_STARS)));
+            entry.setForeignkey(cursor.getInt(cursor.getColumnIndex(FOREIGN_KEY_CATEGORY)));
+        } catch (Exception e) {
+            Log.d(TAG, "QUERY EXCEPTION! " + e.getMessage());
+        } finally {
+            cursor.close();
+            return entry;
+        }
 
     }
 
@@ -203,7 +227,6 @@ public class EcommerceOpenHelper extends SQLiteOpenHelper {
                 mReadableDB = getReadableDatabase();
             }
             cursor = mReadableDB.rawQuery(query, null);
-            cursor.moveToFirst();
 
             while (cursor.moveToNext()){
                 Category entry = new Category();
@@ -223,4 +246,43 @@ public class EcommerceOpenHelper extends SQLiteOpenHelper {
             return c;
         }
     }
+
+    public List<Product> getallproduct(int categoryId) {
+        String query = "SELECT  * FROM " + PRODUCT_TABLE + " WHERE " + FOREIGN_KEY_CATEGORY + " = ?";
+
+
+        Cursor cursor = null;
+
+        List<Product> c = new ArrayList<>();
+
+        try {
+            if (mReadableDB == null) {
+                mReadableDB = getReadableDatabase();
+            }
+            cursor = mReadableDB.rawQuery(query, new String[]{String.valueOf(categoryId)});
+
+            while (cursor.moveToNext()){
+                Product entry = new Product();
+                entry.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID_PRODUCT)));
+                entry.setName(cursor.getString(cursor.getColumnIndex(KEY_PRODUCT_NAME)));
+                entry.setDescription(cursor.getString(cursor.getColumnIndex(KEY_PRODUCT_DESCRIPTION)));
+                entry.setLongDescription(cursor.getString(cursor.getColumnIndex(KEY_PRODUCT_LONG_DESCRIPTION)));
+                entry.setImagePath(cursor.getString(cursor.getColumnIndex(KEY_PRODUCT_IMG_PRODUCT)));
+                entry.setPrice(cursor.getDouble(cursor.getColumnIndex(KEY_PRODUCT_PRICE)));
+                entry.setStars(cursor.getFloat(cursor.getColumnIndex(KEY_PRODUCT_STARS)));
+                entry.setForeignkey(cursor.getInt(cursor.getColumnIndex(FOREIGN_KEY_CATEGORY)));
+
+                c.add(entry);
+            }
+
+
+        } catch (Exception e) {
+            Log.d(TAG, "QUERY EXCEPTION! " + e.getMessage());
+        } finally {
+            cursor.close();
+            return c;
+        }
+    }
+
+
 }

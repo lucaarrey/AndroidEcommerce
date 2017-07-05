@@ -14,8 +14,13 @@ public class Product {
     private double price;
     private String description;
     private String[] photo;
-    private int stars;
+    private float stars;
     private String longDescription;
+    private int foreignkey;
+
+    public Product(){
+
+    }
 
     public Product(int id, String imagePath, String name, double price, String description) {
         this.id = id;
@@ -25,7 +30,7 @@ public class Product {
         this.description = description;
     }
 
-    public Product(int id, String imagePath, String name, double price, String description, int stars, String longDescription) {
+    public Product(int id, String imagePath, String name, double price, String description, int stars, String longDescription, int foreignkey) {
         this.id = id;
         this.imagePath = imagePath;
         this.name = name;
@@ -33,6 +38,7 @@ public class Product {
         this.description = description;
         this.stars = stars;
         this.longDescription = longDescription;
+        this.foreignkey = foreignkey;
     }
 
     public int getId() {
@@ -83,11 +89,11 @@ public class Product {
         this.photo = photo;
     }
 
-    public int getStars() {
+    public float getStars() {
         return stars;
     }
 
-    public void setStars(int stars) {
+    public void setStars(float stars) {
         this.stars = stars;
     }
 
@@ -135,7 +141,6 @@ public class Product {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(photo);
-        result = 31 * result + stars;
         return result;
     }
 
@@ -145,5 +150,13 @@ public class Product {
 
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
+    }
+
+    public int getForeignkey() {
+        return foreignkey;
+    }
+
+    public void setForeignkey(int foreignkey) {
+        this.foreignkey = foreignkey;
     }
 }

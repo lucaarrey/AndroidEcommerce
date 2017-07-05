@@ -9,6 +9,10 @@ public class Category {
     private String imagePath;
     private String title;
     private String subTitle;
+    private int mId;
+
+    public Category() {
+    }
 
     public Category(String imagePath, String title, String subTitle) {
         this.imagePath = imagePath;
@@ -69,5 +73,13 @@ public class Category {
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (subTitle != null ? subTitle.hashCode() : 0);
         return result;
+    }
+
+    public int getmId() {
+        return mId;
+    }
+
+    public void setmId(int mId) {
+        this.mId = mId;
     }
 }

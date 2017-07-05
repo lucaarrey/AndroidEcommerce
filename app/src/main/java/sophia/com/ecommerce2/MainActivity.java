@@ -8,16 +8,13 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import sophia.com.ecommerce2.Database.EcommerceOpenHelper;
 import sophia.com.ecommerce2.adapter.CategoryAdapter;
 import sophia.com.ecommerce2.adapter.OnAdapterItemClickListener;
-import sophia.com.ecommerce2.adapter.ProductAdapter;
-import sophia.com.ecommerce2.model.Product;
 
 public class MainActivity extends AppCompatActivity implements OnAdapterItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -27,6 +24,9 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
 
     private SharedPreferences preferences;
 
+    private EcommerceOpenHelper ecommerceDB;
+
+
 
 
     @Override
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ecommerceDB = new EcommerceOpenHelper(this);
 
 
         //TextView benvenuto = (TextView)findViewById(R.id.benvenuto);
@@ -61,11 +62,13 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
         categoryRecyclerView.setLayoutManager(categoryLayoutManager);
         categoryRecyclerView.setHasFixedSize(true);
 
-        for (int i = 0; i < 20; i++){
-            categorylist.add(new Category("https://www.money.it/local/cache-vignettes/L600xH377/immagini_buon_compleanno_amore_frasi_auguri_di_buon_compleanno_2_whatsapp-eb1fb.jpg?1495219739", "title", "subtitle"));
+//        for (int i = 0; i < 20; i++){
+//            categorylist.add(new Category("https://www.money.it/local/cache-vignettes/L600xH377/immagini_buon_compleanno_amore_frasi_auguri_di_buon_compleanno_2_whatsapp-eb1fb.jpg?1495219739", "title", "subtitle"));
+//
+//
+//        }
 
-
-        }
+        categorylist = ecommerceDB.getallcategory();
 
         CategoryAdapter categoryAdapter = new CategoryAdapter(categorylist, this);
         categoryRecyclerView.setAdapter(categoryAdapter);
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
     @Override
     public void OnItemClick(int position) {
         Intent i = new Intent(this,ProductListActivity.class );
+        i.putExtra("categoryId", categorylist.get(position).getmId());
         startActivity(i);
     }
 
