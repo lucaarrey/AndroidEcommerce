@@ -2,19 +2,29 @@ package sophia.com.ecommerce2;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import sophia.com.ecommerce2.Database.EcommerceOpenHelper;
 import sophia.com.ecommerce2.adapter.CategoryAdapter;
 import sophia.com.ecommerce2.adapter.OnAdapterItemClickListener;
+import sophia.com.ecommerce2.model.Category;
+import sophia.com.ecommerce2.network.EcommerceService;
 
 public class MainActivity extends AppCompatActivity implements OnAdapterItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -26,7 +36,9 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
 
     private EcommerceOpenHelper ecommerceDB;
 
+    private CategoryTask mTask = null;
 
+    private ProgressBar progressBar;
 
 
     @Override
@@ -73,6 +85,9 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
         CategoryAdapter categoryAdapter = new CategoryAdapter(categorylist, this);
         categoryRecyclerView.setAdapter(categoryAdapter);
 
+        mTask = new CategoryTask();
+
+        mTask.execute((Void) null);
 
 
     }
@@ -95,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
 
         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.category_recycle_view),
                 "Property changed " + key,
@@ -128,4 +144,77 @@ public class MainActivity extends AppCompatActivity implements OnAdapterItemClic
         editor.apply();
 
     }
+
+    public void showShoppingCart(){
+
+        Intent t = new Intent(this, ShoppingCartActivity.class);
+        startActivity(t);
+    }
+
+    public class CategoryTask extends AsyncTask<Void, Integer, List<Category>>{
+
+        @Override
+        protected List<Category> doInBackground(Void... params) {
+
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://ecommerce2.getsandbox.com")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            EcommerceService service = retrofit.create(EcommerceService.class);
+            Call<List<Category>> listCall = service.listCategory();
+
+
+            try {
+                Response<List<Category>> listResponse =listCall.execute();
+
+                if (listResponse.isSuccessful()){
+
+                    List<Category> catList = listResponse.body();
+                    int i = 0;
+                    for (Category category : catList) {
+                        ecommerceDB.addOrUpdate(category);
+                        i++;
+                        publishProgress(i);
+                    }
+
+                    return  ecommerceDB.getallcategory();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(List<Category> categories) {
+
+            if (categories==null) return;
+
+
+            categorylist = categories;
+
+            CategoryAdapter categoryAdapter = new CategoryAdapter(categorylist, MainActivity.this);
+            categoryRecyclerView.setAdapter(categoryAdapter);
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            Log.d("onProgressUpdate", "progress" + values);
+        }
+    }
+
+
+
+
 }
