@@ -1,8 +1,11 @@
 package sophia.com.ecommerce2;
 
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -11,15 +14,21 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import sophia.com.ecommerce2.Cart.ShoppingCart;
 import sophia.com.ecommerce2.Database.EcommerceOpenHelper;
 import sophia.com.ecommerce2.model.Product;
 import sophia.com.ecommerce2.network.EcommerceService;
+
+import static sophia.com.ecommerce2.R.id.price;
+import static sophia.com.ecommerce2.R.id.product_recycle_view;
 
 public class ProductViewActivity extends AppCompatActivity {
 
@@ -28,6 +37,11 @@ public class ProductViewActivity extends AppCompatActivity {
     public RatingBar stars;
     public TextView description;
     public TextView long_description;
+    public TextView price;
+
+    private Product product;
+
+    private NumberFormat format;
 
     private EcommerceOpenHelper ecommerceDB;
 
@@ -46,6 +60,9 @@ public class ProductViewActivity extends AppCompatActivity {
         stars = (RatingBar)findViewById(R.id.stars);
         description = (TextView) findViewById(R.id.description);
         long_description = (TextView) findViewById(R.id.long_description);
+        price = (TextView) findViewById((R.id.price));
+
+        format = NumberFormat.getCurrencyInstance(Locale.ITALY);
 
 
 //        Product p = new Product(1,
@@ -73,6 +90,24 @@ public class ProductViewActivity extends AppCompatActivity {
 
     }
 
+    public void addToCartClick(View view) {
+
+        ShoppingCart.getInstance().addProduct(product);
+
+        Snackbar mySnackbar = Snackbar.make(price,
+            "added to cart", Snackbar.LENGTH_LONG);
+        mySnackbar.setAction("Annulla", new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d("ProductViewActivity","Annullato");
+                ShoppingCart.getInstance().addProduct(product);
+            }
+        });
+        mySnackbar.show();
+    }
+
+
     public class ProductTask extends AsyncTask<Void, Void, Product>{
         @Override
         protected Product doInBackground(Void... params) {
@@ -82,7 +117,9 @@ public class ProductViewActivity extends AppCompatActivity {
                     .build();
 
             EcommerceService service = retrofit.create(EcommerceService.class);
-            Call<Product> productCall = service.product();
+
+            int productId = getIntent().getIntExtra("productId", 0);
+            Call<Product> productCall = service.product(productId);
 
             try {
                 Response<Product> productResponse = productCall.execute();
@@ -106,9 +143,12 @@ public class ProductViewActivity extends AppCompatActivity {
 
             Picasso.with(ProductViewActivity.this).load(p.getImagePath()).into(img_product);
             name.setText(p.getName());
-            stars.setTag(p.getStars());
-            description.setTag(p.getDescription());
+            stars.setRating(p.getStars());
+            description.setText(p.getDescription());
             long_description.setText(p.getLongDescription());
+            price.setText(format.format(p.getPrice()));
+
+            product = p;
 
         }
     }
